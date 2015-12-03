@@ -6,6 +6,7 @@
 using namespace Rcpp;
 using namespace arma;
 
+
 // linear calibration;
 
 // [[Rcpp::export]]
@@ -79,6 +80,10 @@ colvec calib_asinh(mat X,
 // // block calibration
 // SEXP block_calibration(SEXP X, sexp d, sexp)
 // 
+// arguments:
+//' @X - array of X values
+//' @d - array of weights
+//' @totals -- array of totals
 // SEXP arma_cube (SEXP array) {
 //   NumericVector vecArray(array);
 //   IntegerVector arrayDims = vecArray.attr("dim");
