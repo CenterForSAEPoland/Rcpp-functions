@@ -50,29 +50,28 @@ colvec calib_asinh(mat X,
          !w.has_nan() & 
          !w.has_inf()) {
          
-         w = d % dasinh(X * lambda,alpha);
+        w = d % dasinh(X * lambda,alpha);
+        uvec b1 = find(w/d < bounds(0));
+        uvec b2 = find(w/d > bounds(1));
     
-    uvec b1 = find(w/d < bounds(0));
-    uvec b2 = find(w/d > bounds(1));
+        if (!b1.is_empty()){
+          w.elem(b1) = bounds(1) * d.elem(b1);
+        }
+        if (!b2.is_empty()) {
+          w.elem(b2) = bounds(2) * d.elem(b2);
+        }
     
-    if (!b1.is_empty()){
-      w.elem(b1) = bounds(1) * d.elem(b1);
-    }
-    if (!b2.is_empty()) {
-      w.elem(b2) = bounds(2) * d.elem(b2);
-    }
+        mat phi = X.t() * w - totals;
+        mat dphi = X;
+        dphi.each_col() %=d;
+        dphi = dphi.t() * X;
+        lambda = lambda - pinv(dphi,eps) * phi;
     
-    mat phi = X.t() * w - totals;
-    mat dphi = X;
-    dphi.each_col() %=d;
-    dphi = dphi.t() * X;
-    lambda = lambda - pinv(dphi,eps) * phi;
-    
-    if (verbose) {
-      Rcout << "Iteration" << std::endl << iter << std::endl;
-    }
-    iter = iter + 1;
-    
+        if (verbose) {
+          Rcout << "Iteration" << std::endl << iter << std::endl;
+        }
+      
+      iter = iter + 1;
   }
   return (w);
 }
